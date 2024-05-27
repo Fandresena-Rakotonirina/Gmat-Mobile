@@ -2,7 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
 import Autocomplete from '../common/autocomplete';
+import { useQuery } from '@apollo/client'
 import { LOAD_USERS } from '../../GraphQL/Queries'
+import { createOptionsUser } from '../../utils'
 
 const ModalRendreOccuper = ({ visible, hideModal }) => {
 
@@ -25,21 +27,23 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
 
     };
     const optionsUser = createOptionsUser(data?.users)
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
 
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  ORDINATEUR ASUS à :</Text>
+                <Autocomplete users={optionsUser}/>
                 <TextInput
-                    label="Taper l'utisateur ici ..."
+                    label="Série du matériel ..."
                     value={inputText}
                     mode='outlined'
                     onChangeText={setInputText}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput 
                 />
-                <Autocomplete users={optionsUser}/>
-                {/* <Divider style={styles.divider} /> */} 
+                <Divider style={styles.divider} /> 
                 <View style={styles.buttonContainer}>
                     <Button onPress={handleCancel} style={styles.button}>
                         OK

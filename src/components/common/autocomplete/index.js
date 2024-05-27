@@ -3,15 +3,14 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { TextInput, List, IconButton, Colors } from 'react-native-paper';
 import styles from './styles';
 
-const Autocomplete = ({users}) => {
+const Autocomplete = ({ users }) => {
    const [text, setText] = useState('');
    const [showOptions, setShowOptions] = useState(false);
-   const [options, setOptions] = useState(['Apple', 'Banana', 'Cherry', 'Date', 'Elderberry', 'Fig']);
    const inputRef = useRef(null);
 
    const filterOptions = (query) => {
-      return options.filter(option =>
-         option.toLowerCase().includes(query.toLowerCase())
+      return users.filter(option =>
+         option.value.toLowerCase().includes(query.toLowerCase())
       );
    };
 
@@ -25,7 +24,7 @@ const Autocomplete = ({users}) => {
    };
 
    const handleOptionSelect = (option) => {
-      setText(option);
+      setText(option.value)
       setShowOptions(false); // Masquer la liste déroulante après avoir sélectionné une option
    };
 
@@ -37,15 +36,15 @@ const Autocomplete = ({users}) => {
       const filteredOptions = filterOptions(text);
 
       if (filteredOptions.length === 0 && text.length > 0) {
-         return <Text style={styles.noDataText}>Aucune donnée dans la liste</Text>;
+         return <Text style={styles.noDataText}>Il n'y a pas de trace de cette recherche dans la base de données</Text>;
       }
 
       return (
          <ScrollView style={styles.dropdown}>
             {filteredOptions.map((option, index) => (
                <List.Item
-                  key={index}
-                  title={option}
+                  key={option.id} // Assurez-vous que chaque option a une clé unique
+                  title={option.value} // Affichez la valeur de l'option
                   onPress={() => handleOptionSelect(option)}
                />
             ))}
@@ -53,18 +52,33 @@ const Autocomplete = ({users}) => {
       );
    };
 
+   // Tester l'affichage de toutes les utilisateurs
+   const renderAllOptions = () => {
+      return (
+         <ScrollView style={styles.dropdown}>
+            {users.map((option, index) => (
+               <List.Item
+                  key={index}
+                  title={option.value}
+                  onPress={() => handleOptionSelect(option)}
+               />
+            ))}
+         </ScrollView>
+      );
+   };
    return (
-      <View style={styles.container}>
+      <>
          <TextInput
             mode='outlined'
             ref={inputRef}
-            label="Fruit"
+            label="Utilisateur"
             value={text}
+            name="userId"
             onChangeText={handleInputChange}
             onFocus={handleInputFocus}
          />
          {showOptions && renderOptions()}
-      </View>
+      </>
    );
 };
 

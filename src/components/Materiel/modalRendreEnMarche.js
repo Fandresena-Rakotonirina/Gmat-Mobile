@@ -16,7 +16,6 @@ const ModalRendreEnMarche = ({ visible, hideModal }) => {
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                {/* Ajouter l'icône et le texte */}
                 <View style={styles.headerContainer}>
                     <MaterialIcons name="warning" size={30} color="orange" style={styles.icon} />
                 </View>

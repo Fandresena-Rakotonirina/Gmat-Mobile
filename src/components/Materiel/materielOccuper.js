@@ -48,7 +48,7 @@ const MaterielOccuper = ({ navigation }) => {
                         <Text style={styles.headerText}>ORDINATEUR</Text>
                         <Text>Marque : ASUS</Text>
                         <Text>Nombre : 1</Text>
-                        <Text>Utilisateur : Rakoto Gilbert</Text>
+                        <Text>Utilisateur: Rakoto Gilbert</Text>
                      </Body>
                   </CardItem>
                   <CardItem footer bordered style={styles.footer}>
