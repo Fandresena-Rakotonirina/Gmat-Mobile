@@ -5,11 +5,10 @@ import { TextInput,PaperProvider } from 'react-native-paper';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
 import ModalRendreLibre from './modalRendrelibre';
 
-const MaterielOccuper = ({ navigation }) => {
+const MaterielOccuper = () => {
 
    const [text, setText] = React.useState("");
    
-
    const [visibleModal, setvisibleModal] = useState(false);
 
    const showModal = () => setvisibleModal(true);

@@ -31,7 +31,7 @@ const ModalAjouter = ({ visible, hideModal }) => {
                         label="Marque"
                         mode='outlined'
                         //value={""}
-                        //onChangeText={""}
+                        //onChangeText={" "}
                         style={[styles.textInput, { flex: 1, marginRight: 10 }]} // flex: 1 pour occuper l'espace disponible, marginRight pour l'espace entre les deux champs
                         underlineColorAndroid="transparent"
                     />
