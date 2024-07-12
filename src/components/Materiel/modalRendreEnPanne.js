@@ -1,11 +1,18 @@
 import * as React from 'react';
 import { View,StyleSheet} from 'react-native';
 import { Modal, Portal, Text, Button, TextInput,Divider} from 'react-native-paper';
+import { createOptionsTechnicien } from '../../utils';
+import Autocomplete from '../common/autocomplete';
+import { useQuery } from '@apollo/client'
+import { LOAD_TECHNICIENS } from '../../GraphQL/Queries'
+
 
 const ModalRendreEnPanne = ({ visible, hideModal }) => {
 
     const [inputText, setInputText] = React.useState('');
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
+
+    const { error, loading, data } = useQuery(LOAD_TECHNICIENS);
     const handleCancel = () => {
         hideModal();
         setInputText('');
@@ -16,18 +23,15 @@ const ModalRendreEnPanne = ({ visible, hideModal }) => {
         hideModal();
         setInputText('');
     };
+
+    const optionsTechnicien = createOptionsTechnicien(data?.techniciens)
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Confier un  ORDINATEUR ASUS à :</Text>
-                <TextInput
-                    label="Taper le technicien ici..."
-                    value={inputText}
-                    mode='outlined'
-                    onChangeText={setInputText}
-                    style={styles.textInput}
-                    underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput
-                />
+                <Autocomplete users={optionsTechnicien} placeholder={"Technicien"}/>
                 <TextInput
                     label="Serie du materiel..."
                     mode='outlined'

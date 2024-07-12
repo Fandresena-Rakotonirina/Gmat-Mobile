@@ -34,7 +34,7 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  ORDINATEUR ASUS à :</Text>
-                <Autocomplete users={optionsUser}/>
+                <Autocomplete users={optionsUser}  placeholder={"Utilisateur"}/>
                 <TextInput
                     label="Série du matériel ..."
                     value={inputText}
