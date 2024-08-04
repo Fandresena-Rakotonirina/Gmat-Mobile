@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { TextInput, List, IconButton, Colors } from 'react-native-paper';
 import styles from './styles';
 
-const Autocomplete = ({ users,placeholder }) => {
+const Autocomplete = ({ users, placeholder, name }) => {
    const [text, setText] = useState('');
    const [showOptions, setShowOptions] = useState(false);
    const inputRef = useRef(null);
@@ -73,7 +73,7 @@ const Autocomplete = ({ users,placeholder }) => {
             ref={inputRef}
             label={placeholder}
             value={text}
-            name="userId"
+            name={name}
             onChangeText={handleInputChange}
             onFocus={handleInputFocus}
          />

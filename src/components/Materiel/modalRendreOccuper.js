@@ -34,7 +34,7 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  ORDINATEUR ASUS à :</Text>
-                <Autocomplete users={optionsUser}  placeholder={"Utilisateur"}/>
+                <Autocomplete users={optionsUser}  placeholder={"Utilisateur"}  name={"utilisateur"}/>
                 <TextInput
                     label="Série du matériel ..."
                     value={inputText}
@@ -46,7 +46,7 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
                 <Divider style={styles.divider} /> 
                 <View style={styles.buttonContainer}>
                     <Button onPress={handleCancel} style={styles.button}>
-                        OK
+                        Valider
                     </Button>
                     <Button onPress={handleOk} style={styles.button}>
                         Annuler
@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     divider: {
         marginVertical: 10,
         backgroundColor: 'gray'
+        
     },
     buttonContainer: {
         flexDirection: 'row',

@@ -15,7 +15,7 @@ const CardMateriel = ({ details }) => {
     const hideModalOccuper = () => setvisibleModalOccuper(false);
  
     const showModalEnPanne = () => setVisibleModalEnPanne(true);
-    const hideModalEnPanne = () => setVisibleModalEnPanne(false);
+    const hideModalEnPanne = () => setVisibleModalEnPanne(false);   
     return (
         <>
             {details.map(detail => (

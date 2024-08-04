@@ -4,7 +4,10 @@ import { onError } from '@apollo/client/link/error'
 import { navigationRef } from './src/navigations/RootNavigation';
 import { NavigationContainer } from '@react-navigation/native';
 import DrawerNavigator from './src/navigations/drawernavigator';
+import { LogBox } from 'react-native';
 
+
+//LogBox.ignoreAllLogs(true);
 const httpLink = new HttpLink({
     uri: 'http://192.168.43.171:8000/graphql'
 })
