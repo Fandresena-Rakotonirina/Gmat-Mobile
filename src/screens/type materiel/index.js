@@ -2,16 +2,20 @@ import React, { useState } from 'react';
 import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-native';
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
+import { useQuery } from '@apollo/client';
+import { LOAD_DETAILS } from '../../GraphQL/Queries';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
 import ModalAjouter from '../../components/type materiel/modaleAjouter';
 import ModalModifier from '../../components/type materiel/modalModifier';
 import ModalSupprimer from '../../components/type materiel/modalSupprimer';
+import ListTypeMateriel from '../../components/type materiel/listTypeMateriel'
 
 const TypeMateriel = ({ navigation }) => {
 
    const windowWidth = Dimensions.get('window').width;
 
+   const { error, loading, data } = useQuery(LOAD_DETAILS)
    const [visibleModalAjouter, setvisibleModalAjouter] = useState(false);
    const showModalAjouter = () => setvisibleModalAjouter(true);
    const hideModalAjouter = () => setvisibleModalAjouter(false);
@@ -24,7 +28,6 @@ const TypeMateriel = ({ navigation }) => {
    //const showModalSupprimer = () => setvisibleModalSupprimer(true);
    const hideModalSupprimer = () => setvisibleModalSupprimer(false);
 
-   
    const [visibleMenu, setVisibleMenu] = useState({});
    const openMenu = (index) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: true }));
@@ -55,6 +58,11 @@ const TypeMateriel = ({ navigation }) => {
          <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
       </Menu>
    );
+   if (loading) return <Text>Loading...</Text>;
+   if (error) {
+      console.log('Error fetching data:', error);
+      return <Text>Error fetching data !</Text>;
+   }
 
    return (
       <PaperProvider>
@@ -91,34 +99,7 @@ const TypeMateriel = ({ navigation }) => {
                />
                <View style={styles.content}>
                   <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text style={styles.headerText}>ORDINATEUR</Text>
-                              <Text>Marque: ASUS</Text>
-                              <Text>Nombre: 5</Text>
-                              <Text>Occupé : 0</Text>
-                              <Text>En panne: 0</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(0)}
-                           </Right>
-                        </CardItem>
-                     </Card>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text style={styles.headerText}>IMPRIMANTE</Text>
-                              <Text>Marque: BROTHERS</Text>
-                              <Text>Nombre: 4</Text>
-                              <Text>Occupé : 2</Text>
-                              <Text>En panne: 0</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(1)}
-                           </Right>
-                        </CardItem>
-                     </Card>
+                  <ListTypeMateriel details={data.details} renderMenu={renderMenu} />
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />

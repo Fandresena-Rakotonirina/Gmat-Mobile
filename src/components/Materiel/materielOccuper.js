@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Alert } from 'react-native';
-import { Text, Card, CardItem, Body, View, H3 } from 'native-base';
+import { Text, View } from 'native-base';
 import { TextInput,PaperProvider } from 'react-native-paper';
-import { Feather, MaterialIcons } from '@expo/vector-icons';
 import ModalRendreLibre from './modalRendrelibre';
 import { useQuery } from '@apollo/client'
 import { LOAD_MATERIELS } from '../../GraphQL/Queries'
@@ -23,7 +22,7 @@ const MaterielOccuper = () => {
       return <Text>Error fetching data !</Text>;
    }
 
-   // Filtrer les résultats pour exclure les materiels où user.id est nul
+   // Filtrer les résultats pour exclure les materiels où user.id est non nul et existe
   const filteredMateriels = data.materiels.filter(materiel => materiel.user && materiel.user.id !== null);
 
    return (

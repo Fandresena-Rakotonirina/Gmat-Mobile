@@ -42,7 +42,6 @@ const CardMateriel = ({ details }) => {
         </>
     )
 }
-
 export default CardMateriel
 const styles = StyleSheet.create({
     card: {
