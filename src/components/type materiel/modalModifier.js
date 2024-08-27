@@ -1,18 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
 
-const ModalModifier = ({ visible, hideModal }) => {
+import { useQuery, useMutation } from '@apollo/client';
+import { UPDATE_DETAIL } from '../../GraphQL/Mutations';
+import { LOAD_DETAILS } from '../../GraphQL/Queries';
+const ModalModifier = ({ visible, hideModal, selectedDetail }) => {
 
-    const [inputText, setInputText] = React.useState('');
+    const [type, setType] = useState('');
+    const [marque, setMarque] = useState('');
+    const [total, setTotal] = useState('');
+    const [updateDetail, { loading, error }] = useMutation(UPDATE_DETAIL)
 
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
     };
 
-    const handleOk = () => {
-        hideModal();
+    // Mettre à jour les valeurs de l'état lorsque selectedDetail change
+    useEffect(() => {
+        if (selectedDetail) {
+            setType(selectedDetail.type);
+            setMarque(selectedDetail.marque);
+            setTotal(selectedDetail.total.toString());
+        }
+    }, [selectedDetail]);
+
+    const modifierTypemateriel = () => {
+        if (!selectedDetail || !selectedDetail.id) {
+            console.log("Erreur : l'ID n'est pas disponible pour la modification");
+            return;
+        }
+
+        updateDetail({
+            variables: {
+                id: selectedDetail.id,
+                updateMaterielFields: { type: type, marque: marque, total: parseInt(total) }
+            },
+            refetchQueries: [{ query: LOAD_DETAILS }]
+        }).then(response => {
+            console.log("Type materiel modifier  :", response);
+            hideModal();  // Fermer le modal après l'ajout
+        }).catch(error => {
+            console.log("Erreur lors de l'ajout :", error);
+        });
+        
+        if (loading) {
+            console.log("Chargement...");
+        }
     };
     return (
         <Portal>
@@ -20,9 +55,9 @@ const ModalModifier = ({ visible, hideModal }) => {
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center", fontWeight: "bold" }}>Nouveau type matériel :</Text>
                 <TextInput
                     label="Type du matériel"
-                    value={"IMPRIMANTE"}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setType(text)}
+                    value={type}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput
                 />
@@ -30,16 +65,16 @@ const ModalModifier = ({ visible, hideModal }) => {
                     <TextInput
                         label="Marque"
                         mode='outlined'
-                        value={"BROTHERS"}
-                        //onChangeText={""}
+                        onChangeText={text => setMarque(text)}
+                        value={marque}
                         style={[styles.textInput, { flex: 1, marginRight: 10 }]} // flex: 1 pour occuper l'espace disponible, marginRight pour l'espace entre les deux champs
                         underlineColorAndroid="transparent"
                     />
                     <TextInput
                         label="Nombre"
                         mode='outlined'
-                        value={"4"}
-                        //onChangeText={""}
+                        onChangeText={text => setTotal(text)}
+                        value={total}
                         style={[styles.textInput, { flex: 1 }]} // flex: 1 pour occuper l'espace disponible
                         underlineColorAndroid="transparent"
                         keyboardType="numeric"
@@ -47,10 +82,10 @@ const ModalModifier = ({ visible, hideModal }) => {
                 </View>
                 <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
-                    <Button onPress={handleCancel} style={styles.button}>
+                    <Button onPress={modifierTypemateriel} style={styles.button}>
                         Modifier
                     </Button>
-                    <Button onPress={handleOk} style={styles.button}>
+                    <Button onPress={handleCancel} style={styles.button}>
                         Annuler
                     </Button>
                 </View>
@@ -75,7 +110,7 @@ const styles = StyleSheet.create({
     button: {
         marginLeft: 10
     },
-    alignerDeuxInput:{
-        flexDirection:"row"
+    alignerDeuxInput: {
+        flexDirection: "row"
     }
 });

@@ -3,15 +3,32 @@ import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, Divider } from 'react-native-paper';
 import { MaterialIcons } from '@expo/vector-icons';
 
-const ModalSupprimer = ({ visible, hideModal }) => {
+import { useQuery, useMutation } from '@apollo/client';
+import { DELETE_DETAIL } from '../../GraphQL/Mutations';
+import { LOAD_DETAILS } from '../../GraphQL/Queries';
+const ModalSupprimer = ({ visible, hideModal,id }) => {
 
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
+    const [deleteDetail, { loading, error }] = useMutation(DELETE_DETAIL)
+
     const handleCancel = () => {
         hideModal();
     };
 
-    const handleOk = () => {
-        hideModal();
+    const suprimerTypeMateriel = () => {
+        if (!id) {
+            console.log("Erreur : l'ID n'est pas disponible pour la suppression");
+            return;
+        }
+        deleteDetail({
+            variables: { id: id }, // Utilisation de l'ID pour la suppression
+            refetchQueries: [{ query: LOAD_DETAILS }],
+        }).then(response => {
+            console.log("Réponse de la suppression :", response);
+            hideModal();  // Fermer le modal après la suppression
+        }).catch(error => {
+            console.log("Erreur lors de la suppression :", error);
+        });
     };
     return (
         <Portal>
@@ -24,7 +41,7 @@ const ModalSupprimer = ({ visible, hideModal }) => {
                 <Text style={{ fontSize: 18, marginBottom: 10, textAlign: 'center' }}>Voulez-vous vraiment supprimer ce  type matériel ?</Text>
                 <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
-                    <Button onPress={handleOk} style={[styles.button, styles.okButton]}>
+                    <Button onPress={suprimerTypeMateriel} style={[styles.button, styles.okButton]}>
                         Oui
                     </Button>
                     <Button onPress={handleCancel} style={[styles.button, styles.cancelButton]}>

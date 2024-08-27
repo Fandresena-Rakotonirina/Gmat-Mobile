@@ -3,15 +3,19 @@ import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-nati
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useQuery } from '@apollo/client';
+import { LOAD_USERS } from '../../GraphQL/Queries';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
 import ModalAjouter from '../../components/user/modaleAjouterUser';
 import ModalModifier from '../../components/user/modalModifierUser';
 import ModalSupprimer from '../../components/user/modalSupprimerUser';
+import ListUtlisateur from '../../components/user/listUser'
 
 const User = ({ navigation }) => {
 
    const windowWidth = Dimensions.get('window').width;
 
+   const { error, loading, data } = useQuery(LOAD_USERS)
    const [visibleModalAjouter, setvisibleModalAjouter] = useState(false);
    const showModalAjouter = () => setvisibleModalAjouter(true);
    const hideModalAjouter = () => setvisibleModalAjouter(false);
@@ -24,7 +28,8 @@ const User = ({ navigation }) => {
    //const showModalSupprimer = () => setvisibleModalSupprimer(true);
    const hideModalSupprimer = () => setvisibleModalSupprimer(false);
 
-
+   const [selectedUser, setSelectedUser] = useState(null);
+   const [selectedId, setSelectedId] = useState(null); 
    const [visibleMenu, setVisibleMenu] = useState({});
    const openMenu = (index) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: true }));
@@ -34,11 +39,14 @@ const User = ({ navigation }) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: false }));
    };
    const handleModifierPress = (index) => {
-      setvisibleModalModifier(true)
-      closeMenu(index); // Fermer le menu
+      setSelectedUser(data.users[index]); // Récupère le détail correspondant à l'index
+      setvisibleModalModifier(true); // Ouvre la modale de modification
+      closeMenu(index); // Ferme le menu
    };
    const handleSupprimerPress = (index) => {
-      setvisibleModalSupprimer(true)
+      const selectedId = data.users[index].id; // Récupérer l'ID du matériel à partir de l'index
+      setSelectedId(selectedId); // Stocker l'ID dans l'état
+      setvisibleModalSupprimer(true); // Afficher le modal
       closeMenu(index); // Fermer le menu
    };
 
@@ -55,7 +63,6 @@ const User = ({ navigation }) => {
          <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
       </Menu>
    );
-
    return (
       <PaperProvider>
          <View style={styles.container}>
@@ -91,37 +98,18 @@ const User = ({ navigation }) => {
                />
                <View style={styles.content}>
                   <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text>SANTATRINIAINA</Text>
-                              <Text>Fandresena</Text>
-                              <Text style={{color:"#fb5a77"}}>Charge de projet</Text>
-                              <Text>Nombre de matériel a utilisé: 1</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(0)}
-                           </Right>
-                        </CardItem>
-                     </Card>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text>ALPHONSO</Text>
-                              <Text>Davies</Text>
-                              <Text style={{color:"#fb5a77"}}>AS</Text>
-                              <Text>Nombre de materiel a utilisaer: 1</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(1)}
-                           </Right>
-                        </CardItem>
-                     </Card>
+                     {loading ? (
+                        <Text>Loading...</Text>
+                     ) : error ? (
+                        <Text>Error fetching data !</Text>
+                     ) : (
+                        <ListUtlisateur users={data.users} renderMenu={renderMenu} />
+                     )}
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
-               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} />
-               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} />
+               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedUser={selectedUser}/>
+               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId}/>
 
                <FAB
                   style={styles.fab}

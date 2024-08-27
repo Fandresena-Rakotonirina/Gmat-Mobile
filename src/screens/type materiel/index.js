@@ -28,6 +28,8 @@ const TypeMateriel = ({ navigation }) => {
    //const showModalSupprimer = () => setvisibleModalSupprimer(true);
    const hideModalSupprimer = () => setvisibleModalSupprimer(false);
 
+   const [selectedDetail, setSelectedDetail] = useState(null);
+   const [selectedId, setSelectedId] = useState(null); // Ajouter un état pour stocker l'ID sélectionné
    const [visibleMenu, setVisibleMenu] = useState({});
    const openMenu = (index) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: true }));
@@ -37,11 +39,14 @@ const TypeMateriel = ({ navigation }) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: false }));
    };
    const handleModifierPress = (index) => {
-      setvisibleModalModifier(true)
-      closeMenu(index); // Fermer le menu
+      setSelectedDetail(data.details[index]); // Récupère le détail correspondant à l'index
+      setvisibleModalModifier(true); // Ouvre la modale de modification
+      closeMenu(index); // Ferme le menu
    };
    const handleSupprimerPress = (index) => {
-      setvisibleModalSupprimer(true)
+      const selectedId = data.details[index].id; // Récupérer l'ID du matériel à partir de l'index
+      setSelectedId(selectedId); // Stocker l'ID dans l'état
+      setvisibleModalSupprimer(true); // Afficher le modal
       closeMenu(index); // Fermer le menu
    };
 
@@ -58,12 +63,6 @@ const TypeMateriel = ({ navigation }) => {
          <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
       </Menu>
    );
-   if (loading) return <Text>Loading...</Text>;
-   if (error) {
-      console.log('Error fetching data:', error);
-      return <Text>Error fetching data !</Text>;
-   }
-
    return (
       <PaperProvider>
          <View style={styles.container}>
@@ -99,12 +98,18 @@ const TypeMateriel = ({ navigation }) => {
                />
                <View style={styles.content}>
                   <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                  <ListTypeMateriel details={data.details} renderMenu={renderMenu} />
+                     {loading ? (
+                        <Text>Loading...</Text>
+                     ) : error ? (
+                        <Text>Error fetching data !</Text>
+                     ) : (
+                        <ListTypeMateriel details={data.details} renderMenu={renderMenu} />
+                     )}
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
-               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} />
-               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} />
+               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedDetail={selectedDetail} />
+               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId}/>
 
                <FAB
                   style={styles.fab}

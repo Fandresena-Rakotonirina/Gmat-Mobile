@@ -3,15 +3,19 @@ import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-nati
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useQuery } from '@apollo/client';
+import { LOAD_TECHNICIENS } from '../../GraphQL/Queries';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
 import ModalAjouter from '../../components/technicien/modaleAjouterTechnicien';
 import ModalModifier from '../../components/technicien/modalModifierTechnicien';
 import ModalSupprimer from '../../components/technicien/modalSupprimerTechnicien';
+import ListTechnicien from '../../components/technicien/listTechnicien'
 
 const Technicien = ({ navigation }) => {
 
    const windowWidth = Dimensions.get('window').width;
 
+   const { error, loading, data } = useQuery(LOAD_TECHNICIENS)
    const [visibleModalAjouter, setvisibleModalAjouter] = useState(false);
    const showModalAjouter = () => setvisibleModalAjouter(true);
    const hideModalAjouter = () => setvisibleModalAjouter(false);
@@ -55,7 +59,6 @@ const Technicien = ({ navigation }) => {
          <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
       </Menu>
    );
-
    return (
       <PaperProvider>
          <View style={styles.container}>
@@ -91,33 +94,13 @@ const Technicien = ({ navigation }) => {
                />
                <View style={styles.content}>
                   <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text>RAKOTO</Text>
-                              <Text>Gilbert</Text>
-                              <Text style={{ color: "#fb5a77" }}>034 25 245 89</Text>
-                              <Text>Nombre de matériel a réparé : 1</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(0)}
-                           </Right>
-                        </CardItem>
-                     </Card>
-                     <Card style={styles.card}>
-                        <CardItem bordered>
-                           <Body>
-                              <Text>JOSHUA</Text>
-                              <Text>Kimich</Text>
-                              <Text style={{ color: "#fb5a77" }}>033 70 163 79</Text>
-                              <Text>Nombre de matériel a réparé : 1</Text>
-                           </Body>
-                           <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
-                              {renderMenu(1)}
-                           </Right>
-                        </CardItem>
-                     </Card>
-
+                     {loading ? (
+                        <Text>Loading...</Text>
+                     ) : error ? (
+                        <Text>Error fetching data !</Text>
+                     ) : (
+                        <ListTechnicien techniciens={data.techniciens} renderMenu={renderMenu} />
+                     )}
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />

@@ -1,18 +1,53 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
+import { useMutation } from '@apollo/client';
+import { ADD_USER } from '../../GraphQL/Mutations';
+import { LOAD_USERS } from '../../GraphQL/Queries';
 
 const ModalAjouter = ({ visible, hideModal }) => {
 
-    const [inputText, setInputText] = React.useState('');
+    const [nom, setNom] = useState('');
+    const [prenom, setPrenom] = useState('');
+    const [fonction, setFonction] = useState('');
 
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
     };
+    const [addUser, { loading: loadingADD_USER, error: errorADD_USER }] =
+        useMutation(ADD_USER, {
+            update(cache, { data }) {
+                // add a new user to the existing array
+                const newUserFromResponse = data?.addUser
+                const existingUsers = cache.readQuery({ query: LOAD_USERS })
+                cache.writeQuery({
+                    query: LOAD_USERS,
+                    data: {
+                        users: [...existingUsers?.users, newUserFromResponse]
+                    }
+                })
+            }
+        })
+    const ajouterUtilisateur = () => {
+        addUser({
+            variables: {
+                addUserFields: {
+                    nom: nom,
+                    prenom: prenom,
+                    fonction: fonction
+                }
+            }
+        }).then(response => {
+            console.log("Utilisateur ajoutee avec succes :", response);
+            handleCancel();
+        }).catch(error => {
+            console.log("Erreur lors de l'ajout :", error);
+        });
 
-    const handleOk = () => {
-        hideModal();
+        if (loadingADD_USER) {
+            console.log("Chargement...");
+        }
     };
     return (
         <Portal>
@@ -20,34 +55,34 @@ const ModalAjouter = ({ visible, hideModal }) => {
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center", fontWeight: "bold" }}>Nouveau type matériel :</Text>
                 <TextInput
                     label="Nom "
-                    //value={inputText}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setNom(text)}
+                    value={nom}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput
                 />
                 <TextInput
                     label="Prénom"
-                    //value={inputText}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setPrenom(text)}
+                    value={prenom}
                     style={styles.textInput}
-                    underlineColorAndroid="transparent" 
+                    underlineColorAndroid="transparent"
                 />
-                 <TextInput
+                <TextInput
                     label="Fonction"
-                    //value={inputText}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setFonction(text)}
+                    value={fonction}
                     style={styles.textInput}
                     underlineColorAndroid="transparent"
                 />
                 <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
-                    <Button onPress={handleCancel} style={styles.button}>
+                    <Button onPress={ajouterUtilisateur} style={styles.button}>
                         Ajouter
                     </Button>
-                    <Button onPress={handleOk} style={styles.button}>
+                    <Button onPress={handleCancel} style={styles.button}>
                         Annuler
                     </Button>
                 </View>

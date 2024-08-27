@@ -1,22 +1,14 @@
-import React, { useState } from 'react';
-import {Text,View,StyleSheet } from 'react-native';
+import React from 'react';
+import CardUser from './cardUser';
 
-const ListUser = ({ navigation }) => {
-
-   return (
-         <View style={styles.container}>
-            <Text>List utilisateur</Text>
-         </View>
-   );
+const ListUser = ({ users, renderMenu }) => {
+    return (
+        <>
+            {users.map((user, index) => (
+                <CardUser key={index} user={user} index={index} renderMenu={renderMenu} />
+            ))}
+        </>
+    );
 };
 
 export default ListUser;
-const styles = StyleSheet.create({
-   container: {
-      flex: 1,
-      padding: 20,
-      width: '100%',
-      alignItems: 'center',
-      justifyContent: 'center',
-   }
-})

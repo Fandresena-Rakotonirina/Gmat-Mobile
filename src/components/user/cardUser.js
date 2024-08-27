@@ -3,18 +3,16 @@ import { StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Text, Card, CardItem, Body, Right, H3 } from 'native-base';
 
-const CardTypeMateriel = ({ detail, index, renderMenu}) => {
+const CardUser = ({ user, index, renderMenu }) => {
 
     return (
         <>
             <Card style={styles.card}>
                 <CardItem bordered>
                     <Body>
-                        <Text  style={styles.headerText}>Type: {detail.type}</Text>
-                        <Text>Marque: {detail.marque}</Text>
-                        <Text>Nombre: {detail.total}</Text>
-                        <Text>Occupé : </Text>
-                        <Text>En panne: </Text>
+                        <Text>{user.nom} {user.prenom}</Text>
+                        <Text style={{ color: "#fb5a77" }}>{user.fonction}</Text>
+                        <Text>Nombre de matériel a utilisé: {user.materiels?.length}</Text>
                     </Body>
                     <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
                         {renderMenu(index)}
@@ -24,7 +22,7 @@ const CardTypeMateriel = ({ detail, index, renderMenu}) => {
         </>
     )
 }
-export default CardTypeMateriel
+export default CardUser
 const styles = StyleSheet.create({
     card: {
         borderRadius: 15,
