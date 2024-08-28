@@ -2,13 +2,15 @@ import React, { useState, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
 import Autocomplete from '../common/autocomplete';
-import { useQuery } from '@apollo/client'
-import { LOAD_USERS } from '../../GraphQL/Queries'
+import { ADD_MATERIEL } from '../../GraphQL/Mutations'
+import { useMutation, useQuery } from '@apollo/client'
+import { LOAD_MATERIELS, LOAD_USERS } from '../../GraphQL/Queries'
 import { createOptionsUser } from '../../utils'
 
-const ModalRendreOccuper = ({ visible, hideModal }) => {
+const ModalRendreOccuper = ({ visible, hideModal,detailId }) => {
 
-    const [inputText, setInputText] = React.useState('');
+    const [serie, setSerie] = React.useState('');
+    const [userId, setUserId] = useState(null);  // Stocke l'ID de l'utilisateur sélectionné    
     const [selectedValue, setSelectedValue] = useState(null);
     const [selectedIds, setIds] = useState([]);
 
@@ -16,15 +18,34 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
-        setInputText('');
     };
-
-    const handleOk = () => {
-
-        hideModal();
+    const [addMateriel, { loading: loadingADD_RENDREOCCUPER, error: errorADD_RENDREOCCUPER }] = useMutation(
+        ADD_MATERIEL
+    )
+    const rendreOccuperMat = () => {
         console.log(selectedValue);
-        setInputText('');
-
+        if (!userId || !serie) {
+            console.log("Erreur : l'utilisateur ou la série est manquante");
+            return;
+        }
+        addMateriel({
+            variables: {
+                addMaterielFields: {
+                    serie: serie,
+                    userId: userId,
+                    detailId: detailId, // Ajout du detailId ici
+                    status: 'en marche',
+                }
+            },
+            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_USERS }]
+        }).then(response => {
+            console.log("Matériel ajouté :", response);
+            handleCancel();
+            setSerie('');
+            setUserId(null);
+        }).catch(error => {
+            console.log("Erreur lors de l'ajout :", error);
+        });
     };
     const optionsUser = createOptionsUser(data?.users)
     if (loading) return <Text>Loading...</Text>;
@@ -34,21 +55,21 @@ const ModalRendreOccuper = ({ visible, hideModal }) => {
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  ORDINATEUR ASUS à :</Text>
-                <Autocomplete users={optionsUser}  placeholder={"Utilisateur"}  name={"utilisateur"}/>
+                <Autocomplete users={optionsUser} placeholder={"Utilisateur"} setUserId={setUserId} />
                 <TextInput
                     label="Série du matériel ..."
-                    value={inputText}
                     mode='outlined'
-                    onChangeText={setInputText}
+                    onChangeText={text => setSerie(text)}
+                    value={serie}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput 
                 />
-                <Divider style={styles.divider} /> 
+                <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
-                    <Button onPress={handleCancel} style={styles.button}>
+                    <Button onPress={rendreOccuperMat} style={styles.button}>
                         Valider
                     </Button>
-                    <Button onPress={handleOk} style={styles.button}>
+                    <Button onPress={handleCancel} style={styles.button}>
                         Annuler
                     </Button>
                 </View>
@@ -65,7 +86,7 @@ const styles = StyleSheet.create({
     divider: {
         marginVertical: 10,
         backgroundColor: 'gray'
-        
+
     },
     buttonContainer: {
         flexDirection: 'row',

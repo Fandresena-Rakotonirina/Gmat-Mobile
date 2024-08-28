@@ -6,7 +6,7 @@ import Register from '../screens/register';
 import TypeMateriel from '../screens/type materiel';
 import Technicien from '../screens/technicien';
 import User from '../screens/user';
-import ListTechnicien from '../components/technicien/listTechnicien';
+import ListTechnicien from '../components/technicien/listTechniciens';
 import {
    HOME_NAVIGATOR,
    TYPE_MATERIEL,
@@ -18,7 +18,7 @@ import {
    USER_LIST,
    TECHNICIEN_LIST
 } from '../constants/navigationNames';
-import ListUser from '../components/user/listUser';
+import ListUser from '../components/user/listeUtilisateur';
 import ListMateriel from '../components/Materiel/listMateriel';
 
 const HomeStack = createStackNavigator();

@@ -3,6 +3,7 @@ import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-nati
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { SIGNIN } from '../../constants/navigationNames';
 import { useQuery } from '@apollo/client';
 import { LOAD_TECHNICIENS } from '../../GraphQL/Queries';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
@@ -28,7 +29,8 @@ const Technicien = ({ navigation }) => {
    //const showModalSupprimer = () => setvisibleModalSupprimer(true);
    const hideModalSupprimer = () => setvisibleModalSupprimer(false);
 
-
+   const [selectedTechnicien, setSelectedTechnicien] = useState(null);
+   const [selectedId, setSelectedId] = useState(null);
    const [visibleMenu, setVisibleMenu] = useState({});
    const openMenu = (index) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: true }));
@@ -38,11 +40,14 @@ const Technicien = ({ navigation }) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: false }));
    };
    const handleModifierPress = (index) => {
-      setvisibleModalModifier(true)
-      closeMenu(index); // Fermer le menu
+      setSelectedTechnicien(data.techniciens[index]); // Récupère le détail correspondant à l'index
+      setvisibleModalModifier(true); // Ouvre la modale de modification
+      closeMenu(index); // Ferme le menu
    };
    const handleSupprimerPress = (index) => {
-      setvisibleModalSupprimer(true)
+      const selectedId = data.techniciens[index].id; // Récupérer l'ID du matériel à partir de l'index
+      setSelectedId(selectedId); // Stocker l'ID dans l'état
+      setvisibleModalSupprimer(true); // Afficher le modal
       closeMenu(index); // Fermer le menu
    };
 
@@ -74,7 +79,7 @@ const Technicien = ({ navigation }) => {
                      <Title style={{ fontSize: 17, textTransform: 'uppercase' }}>Technicien</Title>
                   </Body>
                   <Right>
-                     <Button transparent onPress={() => navigation.navigate(TYPE_MATERIEL)}>
+                     <Button transparent onPress={() => navigation.navigate(SIGNIN)}>
                         <View style={styles.avatarContainer}>
                            <Image
                               source={require('../../assets/images/Profile.png')}
@@ -104,8 +109,8 @@ const Technicien = ({ navigation }) => {
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
-               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} />
-               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} />
+               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedTechnicien={selectedTechnicien}/>
+               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId} />
 
                <FAB
                   style={styles.fab}

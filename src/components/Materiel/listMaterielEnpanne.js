@@ -5,7 +5,7 @@ function ListMaterielEnPanne({ details,showModal }) {
   return (
     <>
       {details.map((detail, index) => (
-        <CardMaterielEnPanne key={index} detail={detail} showModal={showModal} />
+        <CardMaterielEnPanne key={index} detail={detail} />
       ))}
     </>
   );

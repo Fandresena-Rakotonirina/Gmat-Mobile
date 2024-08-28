@@ -2,6 +2,8 @@ import * as React from 'react';
 import { StyleSheet, StatusBar,Image } from 'react-native';
 import { Container, Header, Title, Button, Text, Tab, Tabs, TabHeading, Left,Right, Body, View } from 'native-base';
 import { Ionicons} from '@expo/vector-icons';
+import { SIGNIN } from '../../constants/navigationNames';
+
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
 import Tab1 from '../../components/Materiel/materielLibre';
 import Tab2 from '../../components/Materiel/materielOccuper';
@@ -23,7 +25,7 @@ const Materiel = ({ navigation }) => {
                   <Title style={{ fontSize: 17, textTransform: 'uppercase' }}>Matériels</Title>   
                </Body>
                <Right>
-                  <Button transparent onPress={() => navigation.navigate(TYPE_MATERIEL)}>
+                  <Button transparent onPress={() => navigation.navigate(SIGNIN)}>
                      <View style={styles.avatarContainer}>
                         <Image
                         source={require('../../assets/images/Profile.png')}

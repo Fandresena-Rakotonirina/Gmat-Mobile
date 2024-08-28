@@ -3,6 +3,7 @@ import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-nati
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { SIGNIN } from '../../constants/navigationNames';
 import { useQuery } from '@apollo/client';
 import { LOAD_USERS } from '../../GraphQL/Queries';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
@@ -78,7 +79,7 @@ const User = ({ navigation }) => {
                      <Title style={{ fontSize: 17, textTransform: 'uppercase' }}>Utisateur</Title>
                   </Body>
                   <Right>
-                     <Button transparent onPress={() => navigation.navigate(TYPE_MATERIEL)}>
+                     <Button transparent onPress={() => navigation.navigate(SIGNIN)}>
                         <View style={styles.avatarContainer}>
                            <Image
                               source={require('../../assets/images/Profile.png')}

@@ -1,18 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
 
-const ModalModifier = ({ visible, hideModal }) => {
+import { useQuery, useMutation } from '@apollo/client';
+import { UPDATE_TECHNICIEN } from '../../GraphQL/Mutations';
+import { LOAD_TECHNICIENS } from '../../GraphQL/Queries';
+const ModalModifier = ({ visible, hideModal,selectedTechnicien }) => {
 
-    const [inputText, setInputText] = React.useState('');
+    const [nom, setNom] = useState('');
+    const [prenom, setPrenom] = useState('');
+    const [contact, setContact] = useState('');
+    const [updateTechnicien, { loading, error }] = useMutation(UPDATE_TECHNICIEN)
 
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
     };
+    // Mettre à jour les valeurs de l'état lorsque selectedDetail change
+    useEffect(() => {
+        if (selectedTechnicien) {
+            setNom(selectedTechnicien.nom);
+            setPrenom(selectedTechnicien.prenom);
+            setContact(selectedTechnicien.contact);
+        }
+    }, [selectedTechnicien]);
+    const modifierTypemateriel = () => {
+        if (!selectedTechnicien || !selectedTechnicien.id) {
+            console.log("Erreur : l'ID n'est pas disponible pour la modification");
+            return;
+        }
 
-    const handleOk = () => {
-        hideModal();
+        updateTechnicien({
+            variables: {
+                id: selectedTechnicien.id,
+                updateTechnicienFields: { nom: nom, prenom: prenom, contact: contact }
+            },
+            refetchQueries: [{ query: LOAD_TECHNICIENS }]
+        }).then(response => {
+            console.log("Technicien modifie ", response);
+            handleCancel();  // Fermer le modal après l'ajout
+        }).catch(error => {
+            console.log("Erreur lors de l'ajout :", error);
+        });
+        
+        if (loading) {
+            console.log("Chargement...");
+        }
     };
     return (
         <Portal>
@@ -20,17 +53,17 @@ const ModalModifier = ({ visible, hideModal }) => {
                 <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center", fontWeight: "bold" }}>Modifier utilisateur :</Text>
                 <TextInput
                     label="Nom "
-                    value={"RAKOTO"}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setNom(text)}
+                    value={nom}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput
                 />
                 <TextInput
                     label="Prénom "
-                    value={"Gilbert"}
                     mode='outlined'
-                    //onChangeText={""}
+                    onChangeText={text => setPrenom(text)}
+                    value={prenom}
                     style={styles.textInput}
                     underlineColorAndroid="transparent" // Pour supprimer le fond du TextInput
                 />
@@ -38,8 +71,8 @@ const ModalModifier = ({ visible, hideModal }) => {
                     <TextInput
                         label="Contact"
                         mode='outlined'
-                        value={"0343472589"}
-                        //onChangeText={""}
+                        onChangeText={text => setContact(text)}
+                        value={contact}
                         style={[styles.textInput, { flex: 1, marginRight: 10 }]} // flex: 1 pour occuper l'espace disponible, marginRight pour l'espace entre les deux champs
                         underlineColorAndroid="transparent"
                         keyboardType="numeric"
@@ -47,10 +80,10 @@ const ModalModifier = ({ visible, hideModal }) => {
                 </View>
                 <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
-                    <Button onPress={handleCancel} style={styles.button}>
+                    <Button onPress={modifierTypemateriel} style={styles.button}>
                         Modifier
                     </Button>
-                    <Button onPress={handleOk} style={styles.button}>
+                    <Button onPress={handleCancel} style={styles.button}>
                         Annuler
                     </Button>
                 </View>

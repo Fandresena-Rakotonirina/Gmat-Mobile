@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
-import { useQuery, useMutation } from '@apollo/client';
-import { ADD_DETAIL, UPDATE_DETAIL } from '../../GraphQL/Mutations';
+import { useMutation } from '@apollo/client';
+import { ADD_DETAIL } from '../../GraphQL/Mutations';
 import { LOAD_DETAILS } from '../../GraphQL/Queries';
 
 const ModalAjouter = ({ visible, hideModal }) => {
@@ -13,10 +13,6 @@ const ModalAjouter = ({ visible, hideModal }) => {
 
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
-        hideModal();
-    };
-
-    const handleOk = () => {
         hideModal();
     };
     const [addDetail, { loading: loadingADD_DETAIL, error: errorADD_DETAIL }] =
@@ -33,26 +29,27 @@ const ModalAjouter = ({ visible, hideModal }) => {
             }
         })
 
-        const ajouterTypeMateriel = () => {
-            addDetail({
-                variables: {
-                    addDetailFields: { 
-                        type: type, 
-                        marque: marque, 
-                        total: parseInt(total)
-                    }
+    const ajouterTypeMateriel = () => {
+        addDetail({
+            variables: {
+                addDetailFields: {
+                    type: type,
+                    marque: marque,
+                    total: parseInt(total),
+                    
                 }
-            }).then(response => {
-                console.log("Réponse de la mutation :", response);
-                handleCancel();  // Fermer le modal après l'ajout
-            }).catch(error => {
-                console.log("Erreur lors de l'ajout :", error);
-            });
-            
-            if (loadingADD_DETAIL) {
-                console.log("Chargement...");
             }
-        };
+        }).then(response => {
+            console.log("Réponse de la mutation :", response);
+            handleCancel();  // Fermer le modal après l'ajout
+        }).catch(error => {
+            console.log("Erreur lors de l'ajout :", error);
+        });
+
+        if (loadingADD_DETAIL) {
+            console.log("Chargement...");
+        }
+    };
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>

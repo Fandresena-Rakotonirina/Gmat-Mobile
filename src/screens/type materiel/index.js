@@ -3,6 +3,7 @@ import { StyleSheet, StatusBar, Image, ScrollView, Dimensions } from 'react-nati
 import { FAB, TextInput, PaperProvider, Menu, Divider } from 'react-native-paper';
 import { Container, Header, Title, Button, Text, Card, CardItem, Left, Right, Body, View } from 'native-base';
 import { useQuery } from '@apollo/client';
+import { SIGNIN } from '../../constants/navigationNames';
 import { LOAD_DETAILS } from '../../GraphQL/Queries';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { TYPE_MATERIEL } from '../../constants/navigationNames';
@@ -78,7 +79,7 @@ const TypeMateriel = ({ navigation }) => {
                      <Title style={{ fontSize: 17, textTransform: 'uppercase' }}>Type matériels</Title>
                   </Body>
                   <Right>
-                     <Button transparent onPress={() => navigation.navigate(TYPE_MATERIEL)}>
+                     <Button transparent onPress={() => navigation.navigate(SIGNIN)}>
                         <View style={styles.avatarContainer}>
                            <Image
                               source={require('../../assets/images/Profile.png')}
@@ -109,7 +110,7 @@ const TypeMateriel = ({ navigation }) => {
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
                <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedDetail={selectedDetail} />
-               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId}/>
+               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId} />
 
                <FAB
                   style={styles.fab}

@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, ScrollView } from 'react-native';
 import { TextInput, List, IconButton, Colors } from 'react-native-paper';
 import styles from './styles';
 
-const Autocomplete = ({ users, placeholder, name }) => {
+const Autocomplete = ({ users, placeholder, setUserId }) => {
    const [text, setText] = useState('');
    const [showOptions, setShowOptions] = useState(false);
    const inputRef = useRef(null);
@@ -24,8 +24,9 @@ const Autocomplete = ({ users, placeholder, name }) => {
    };
 
    const handleOptionSelect = (option) => {
-      setText(option.value)
-      setShowOptions(false); // Masquer la liste déroulante après avoir sélectionné une option
+      setText(option.value);
+      setUserId(option.id);  // Définit l'ID de l'utilisateur sélectionné
+      setShowOptions(false);
    };
 
    const handleCloseOptions = () => {
@@ -73,7 +74,6 @@ const Autocomplete = ({ users, placeholder, name }) => {
             ref={inputRef}
             label={placeholder}
             value={text}
-            name={name}
             onChangeText={handleInputChange}
             onFocus={handleInputFocus}
          />

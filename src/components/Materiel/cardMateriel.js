@@ -10,35 +10,63 @@ const CardMateriel = ({ details }) => {
     const windowWidth = Dimensions.get('window').width;
     const [visibleModalOccuper, setvisibleModalOccuper] = useState(false);
     const [visibleModalEnPanne, setVisibleModalEnPanne] = useState(false);
- 
-    const showModalOccuper = () => setvisibleModalOccuper(true);
+    const [selectedDetailId, setSelectedDetailId] = useState(null); // State to hold the selected detail ID
+
+    //const showModalOccuper = () => setvisibleModalOccuper(true);
+    const showModalOccuper = (id) => {
+        setSelectedDetailId(id); // Set the selected detail ID
+        setvisibleModalOccuper(true);
+    };
     const hideModalOccuper = () => setvisibleModalOccuper(false);
  
-    const showModalEnPanne = () => setVisibleModalEnPanne(true);
+    //const showModalEnPanne = () => setVisibleModalEnPanne(true);
+    const showModalEnPanne = (id) => {
+        setSelectedDetailId(id); // Set the selected detail ID
+        setVisibleModalEnPanne(true);
+    };
     const hideModalEnPanne = () => setVisibleModalEnPanne(false);   
     return (
         <>
             {details.map(detail => (
-                <Card key={detail.id} style={styles.card}>
-                    <CardItem bordered>
-                        <View>
-                            <Text style={styles.headerText}>{detail.type}</Text>
-                            <Text>Marque: {detail.marque}</Text>
-                            <Text>Libre: {detail.total}</Text>
-                            <Text>Occupé: 0 </Text>
-                            <Text>En panne: 0 </Text>
-                        </View>
-                    </CardItem>
-                    <CardItem footer bordered style={styles.footer}>
-                        <View style={styles.buttonContainer}>
-                            <MaterialIcons style={{ marginRight: windowWidth * 0.3 }} name="person-add" size={20} onPress={showModalOccuper} />
-                            <MaterialIcons name="do-not-disturb" size={20} onPress={showModalEnPanne} />
-                        </View>
-                    </CardItem>
-                </Card>
+                <React.Fragment key={detail.id}>
+                    <Card style={styles.card}>
+                        <CardItem bordered>
+                            <View>
+                                <Text style={styles.headerText}>{detail.type}</Text>
+                                <Text>Marque: {detail.marque}</Text>
+                                <Text>Libre: {detail.total}</Text>
+                                <Text>Occupé: 0 </Text>
+                                <Text>En panne: 0 </Text>
+                            </View>
+                        </CardItem>
+                        <CardItem footer bordered style={styles.footer}>
+                            <View style={styles.buttonContainer}>
+                                <MaterialIcons
+                                    style={{ marginRight: windowWidth * 0.3 }}
+                                    name="person-add"
+                                    size={20}
+                                    onPress={() => showModalOccuper(detail.id)}
+                                />
+                                <MaterialIcons
+                                    name="do-not-disturb"
+                                    size={20}
+                                    onPress={() => showModalEnPanne(detail.id)} 
+                                />
+                            </View>
+                        </CardItem>
+                    </Card>
+                    <ModalRendreOccuper
+                        visible={visibleModalOccuper}
+                        hideModal={hideModalOccuper}
+                        detailId={selectedDetailId}
+                    />
+                    <ModalRendreEnPanne
+                        visible={visibleModalEnPanne}
+                        hideModal={hideModalEnPanne}
+                        detailId={selectedDetailId} 
+                    />
+                </React.Fragment>
             ))}
-            <ModalRendreOccuper visible={visibleModalOccuper} hideModal={hideModalOccuper} />
-            <ModalRendreEnPanne visible={visibleModalEnPanne} hideModal={hideModalEnPanne} />
         </>
     )
 }

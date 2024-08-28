@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Alert } from 'react-native';
 import { Text, View } from 'native-base';
 import { TextInput,PaperProvider } from 'react-native-paper';
-import ModalRendreLibre from './modalRendrelibre';
 import { useQuery } from '@apollo/client'
 import { LOAD_MATERIELS } from '../../GraphQL/Queries'
 import ListMaterielOccuper from './listMaterielOccuper';
@@ -11,10 +10,6 @@ const MaterielOccuper = () => {
 
    const { error, loading, data } = useQuery(LOAD_MATERIELS)
    const [text, setText] = React.useState("");
-   const [visibleModal, setvisibleModal] = useState(false);
-
-   const showModal = () => setvisibleModal(true);
-   const hideModal = () => setvisibleModal(false);
 
    if (loading) return <Text>Loading...</Text>;
    if (error) {
@@ -37,24 +32,8 @@ const MaterielOccuper = () => {
                onChangeText={setText}
             />
             <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
-               <ListMaterielOccuper details={filteredMateriels} showModal={showModal}  />
-               {/* <Card style={styles.card}>
-                  <CardItem bordered>
-                     <Body>
-                        <Text style={styles.headerText}>ORDINATEUR</Text>
-                        <Text>Marque : ASUS</Text>
-                        <Text>Nombre : 1</Text> 
-                        <Text>Utilisateur : GRAND Maitre Gilbert</Text>
-                     </Body>
-                  </CardItem>
-                  <CardItem footer bordered style={styles.footer}>
-                     <View>
-                        <MaterialIcons name="person-add-disabled" size={20} onPress={showModal} />
-                     </View>
-                  </CardItem>
-               </Card> */}
+               <ListMaterielOccuper details={filteredMateriels} />
             </ScrollView>
-            <ModalRendreLibre visible={visibleModal} hideModal={hideModal}/>
          </View>
       </PaperProvider>
 
