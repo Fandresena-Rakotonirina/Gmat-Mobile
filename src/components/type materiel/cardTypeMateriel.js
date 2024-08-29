@@ -13,8 +13,6 @@ const CardTypeMateriel = ({ detail, index, renderMenu}) => {
                         <Text  style={styles.headerText}>Type: {detail.type}</Text>
                         <Text>Marque: {detail.marque}</Text>
                         <Text>Nombre: {detail.total}</Text>
-                        <Text>Occupé : </Text>
-                        <Text>En panne: </Text>
                     </Body>
                     <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>
                         {renderMenu(index)}
@@ -31,7 +29,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     headerText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     }
 });

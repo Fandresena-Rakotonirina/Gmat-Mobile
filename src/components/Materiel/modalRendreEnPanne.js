@@ -5,7 +5,7 @@ import { createOptionsTechnicien } from '../../utils';
 import Autocomplete from '../common/autocomplete';
 import { ADD_MATERIEL } from '../../GraphQL/Mutations'
 import { useMutation, useQuery } from '@apollo/client'
-import { LOAD_MATERIELS, LOAD_TECHNICIENS } from '../../GraphQL/Queries'
+import { LOAD_MATERIELS, LOAD_TECHNICIENS,LOAD_DETAILS } from '../../GraphQL/Queries'
 
 
 const ModalRendreEnPanne = ({ visible, hideModal, detailId }) => {
@@ -37,7 +37,7 @@ const ModalRendreEnPanne = ({ visible, hideModal, detailId }) => {
                     status: 'en panne',
                 }
             },
-            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }]
+            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }, { query: LOAD_DETAILS }]
         }).then(response => {
             console.log("Matériel ajouté :", response);
             handleCancel();

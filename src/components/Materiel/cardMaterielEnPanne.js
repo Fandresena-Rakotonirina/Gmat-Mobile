@@ -5,7 +5,7 @@ import { Text, Card, CardItem, Body } from 'native-base';
 import { Modal, Portal, Button, Divider } from 'react-native-paper';
 import { useMutation } from '@apollo/client';
 import { DELETE_MATERIEL } from '../../GraphQL/Mutations';
-import { LOAD_MATERIELS, LOAD_TECHNICIENS } from '../../GraphQL/Queries';
+import { LOAD_MATERIELS, LOAD_TECHNICIENS,LOAD_DETAILS } from '../../GraphQL/Queries';
 
 const CardMaterielEnPanne = ({ detail }) => {
 
@@ -22,7 +22,7 @@ const CardMaterielEnPanne = ({ detail }) => {
         }
         deleteMateriel({
             variables: { id: detail.id },
-            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }],
+            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }, { query: LOAD_DETAILS }],
         })
             .then(response => {
                 console.log("Réponse de la suppression :", response);

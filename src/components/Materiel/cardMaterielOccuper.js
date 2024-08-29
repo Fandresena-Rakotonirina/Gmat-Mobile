@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Text, Card, CardItem, Body, H3 } from 'native-base';
+import { Text, Card, CardItem, Body } from 'native-base';
 import { Modal, Portal, Button, Divider } from 'react-native-paper';
 import { useMutation } from '@apollo/client';
 import { DELETE_MATERIEL } from '../../GraphQL/Mutations';
-import { LOAD_MATERIELS, LOAD_USERS } from '../../GraphQL/Queries';
+import { LOAD_MATERIELS, LOAD_USERS,LOAD_DETAILS } from '../../GraphQL/Queries';
 
 const CardMaterielOccuper = ({ detail }) => {
     const [visibleModal, setVisibleModal] = useState(false);
@@ -22,7 +22,7 @@ const CardMaterielOccuper = ({ detail }) => {
         }
         deleteMateriel({
             variables: { id: detail.id },
-            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_USERS }],
+            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_USERS }, { query: LOAD_DETAILS }],
         })
             .then(response => {
                 console.log("Réponse de la suppression :", response);

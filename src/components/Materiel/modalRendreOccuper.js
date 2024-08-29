@@ -47,7 +47,7 @@ const ModalRendreOccuper = ({ visible, hideModal,detailId }) => {
             console.log("Erreur lors de l'ajout :", error);
         });
     };
-    const optionsUser = createOptionsUser(data?.users)
+    const optionsUser = useMemo(() => createOptionsUser(data?.users), [data]);
     if (loading) return <Text>Loading...</Text>;
     if (error) return <Text>Error: {error.message}</Text>;
 

@@ -71,6 +71,12 @@ export const LOAD_DETAILS = gql`
           nom
           prenom
         }
+        technicien {
+        id
+        nom
+        prenom
+        contact
+        }
       }
     }
   }
