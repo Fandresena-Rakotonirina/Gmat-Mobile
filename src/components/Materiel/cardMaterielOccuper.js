@@ -40,7 +40,7 @@ const CardMaterielOccuper = ({ detail }) => {
                     <Body>
                         <Text style={styles.headerText}>{detail.detail.type} ({detail.detail.marque})</Text>
                         <Text>Série : {detail.serie}</Text>
-                        <Text>Nombre : 1</Text>
+                        <Text>Nombre : {detail.nombre}</Text>
                         <Text>Utilisateur : {detail.user.nom} {detail.user.prenom}</Text>
                     </Body>
                 </CardItem>

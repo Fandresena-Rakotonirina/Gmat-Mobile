@@ -14,6 +14,8 @@ const ModalAjouter = ({ visible, hideModal }) => {
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
+        setType("");
+        setTotal("");
     };
     const [addDetail, { loading: loadingADD_DETAIL, error: errorADD_DETAIL }] =
         useMutation(ADD_DETAIL, {

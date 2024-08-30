@@ -42,7 +42,7 @@ const CardMaterielEnPanne = ({ detail }) => {
                     <Body>
                         <Text style={styles.headerText}>{detail.detail.type}({detail.detail.marque})</Text>
                         <Text>Série : {detail.serie}</Text>
-                        <Text>Nombre : 1</Text>
+                        <Text>Nombre : {detail.nombre}</Text>
                         <Text>Technicien : {detail.technicien.nom} {detail.technicien.prenom}</Text>
                     </Body>
                 </CardItem>

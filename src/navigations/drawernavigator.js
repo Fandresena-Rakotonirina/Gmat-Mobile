@@ -12,7 +12,9 @@ const DrawerNavigator = () => {
       screenOptions={{drawerType: 'front'}}
       drawerContent={({navigation}) =>
         getDrawerContent(navigation)
-      }>
+      }
+      
+      >
       <Drawer.Screen
         options={{headerShown: false}}
         name="Materiel"

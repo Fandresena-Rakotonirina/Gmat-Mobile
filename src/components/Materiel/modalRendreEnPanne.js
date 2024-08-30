@@ -1,69 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-paper';
-import { createOptionsTechnicien } from '../../utils';
 import Autocomplete from '../common/autocomplete';
-import { ADD_MATERIEL } from '../../GraphQL/Mutations'
-import { useMutation, useQuery } from '@apollo/client'
-import { LOAD_MATERIELS, LOAD_TECHNICIENS,LOAD_DETAILS } from '../../GraphQL/Queries'
+import { ADD_MATERIEL } from '../../GraphQL/Mutations';
+import { useMutation, useQuery } from '@apollo/client';
+import { LOAD_MATERIELS, LOAD_TECHNICIENS, LOAD_DETAILS } from '../../GraphQL/Queries';
+import { createOptionsTechnicien } from '../../utils';
 
+const ModalRendreEnPanne = ({ visible, hideModal, detailId, materielLibre }) => {
+    const [serie, setSerie] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [technicienId, setTechnicienId] = useState(null);
 
-const ModalRendreEnPanne = ({ visible, hideModal, detailId }) => {
-
-    const [serie, setSerie] = React.useState('');
-    const [technicienId, setTechnicienId] = useState(null);  // Stocke l'ID du technicien sélectionné    
-    const [selectedValue, setSelectedValue] = useState(null);
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
 
-    const { error, loading, data } = useQuery(LOAD_TECHNICIENS);
+    const { loading, error, data } = useQuery(LOAD_TECHNICIENS);
+    const [addMateriel] = useMutation(ADD_MATERIEL, {
+        refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }, { query: LOAD_DETAILS }]
+    });
+
     const handleCancel = () => {
         hideModal();
         setSerie('');
+        setNombre('');
+        setTechnicienId(null);
+        setErrorMessage('');
     };
-    const [addMateriel, { loading: loadingADD_RENDREENPANNE, error: errorADD_RENDREENPANNE }] = useMutation(
-        ADD_MATERIEL
-    )
+
     const rendreEnPanneMat = () => {
-        if (!technicienId || !serie) {
-            console.log("Erreur : l'utilisateur ou la série est manquante");
+        if (!technicienId || !serie || !nombre) {
+            setErrorMessage("Tous les champs doivent être remplis.");
             return;
         }
+
+        if (parseInt(nombre) > materielLibre) {
+            setErrorMessage(`Il y a seulement ${materielLibre} matériel(s) libre(s) !!!`);
+            return;
+        }
+
         addMateriel({
             variables: {
                 addMaterielFields: {
-                    serie: serie,
-                    technicienId: technicienId,
-                    detailId: detailId, // Ajout du detailId ici
+                    serie,
+                    nombre,
+                    technicienId,
+                    detailId,
                     status: 'en panne',
                 }
-            },
-            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_TECHNICIENS }, { query: LOAD_DETAILS }]
+            }
         }).then(response => {
             console.log("Matériel ajouté :", response);
             handleCancel();
-            setSerie('');
-            setUserId(null);
         }).catch(error => {
             console.log("Erreur lors de l'ajout :", error);
         });
     };
 
-    const optionsTechnicien = createOptionsTechnicien(data?.techniciens)
+    const optionsTechnicien = useMemo(() => createOptionsTechnicien(data?.techniciens), [data]);
+
     if (loading) return <Text>Loading...</Text>;
     if (error) return <Text>Error: {error.message}</Text>;
+
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Confier un  ORDINATEUR ASUS à :</Text>
-                <Autocomplete users={optionsTechnicien} placeholder={"Technicien"} setUserId={setTechnicienId}  />
-                <TextInput
-                    label="Serie du materiel..."
-                    mode='outlined'
-                    onChangeText={text => setSerie(text)}
-                    value={serie}
-                    style={styles.textInput}
-                    underlineColorAndroid="transparent"
-                />
+                <Text style={styles.title}>Confier un ORDINATEUR ASUS à :</Text>
+                <Autocomplete users={optionsTechnicien} placeholder={"Technicien"} setUserId={setTechnicienId} />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        label="No Série ..."
+                        mode='outlined'
+                        onChangeText={setSerie}
+                        value={serie}
+                        style={[styles.textInput, { marginRight: 10 }]}
+                    />
+                    <TextInput
+                        label="Nombre"
+                        mode='outlined'
+                        onChangeText={setNombre}
+                        value={nombre}
+                        style={styles.textInput}
+                        keyboardType="numeric"
+                    />
+                </View>
+                {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
                 <Divider style={styles.divider} />
                 <View style={styles.buttonContainer}>
                     <Button onPress={rendreEnPanneMat} style={styles.button}>
@@ -77,12 +98,24 @@ const ModalRendreEnPanne = ({ visible, hideModal, detailId }) => {
         </Portal>
     );
 };
-export default ModalRendreEnPanne;
 
 const styles = StyleSheet.create({
+    title: {
+        fontSize: 18,
+        marginBottom: 10,
+        alignSelf: "center"
+    },
+    inputContainer: {
+        flexDirection: "row",
+        marginBottom: 20
+    },
     textInput: {
-        marginBottom: 20,
-        backgroundColor: 'transparent', // Définir le fond du TextInput comme transparent
+        flex: 1,
+        backgroundColor: 'transparent'
+    },
+    errorMessage: {
+        color: 'red',
+        marginBottom: 10
     },
     divider: {
         marginVertical: 10,
@@ -96,3 +129,5 @@ const styles = StyleSheet.create({
         marginLeft: 10
     }
 });
+
+export default ModalRendreEnPanne;

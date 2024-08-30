@@ -11,7 +11,9 @@ const CardUser = ({ user, index, renderMenu }) => {
                 <CardItem bordered>
                     <Body>
                         <Text>{user.nom} {user.prenom}</Text>
-                        <Text style={{ color: "#fb5a77" }}>{user.fonction}</Text>
+                        <Text style={{ color: "#fb5a77" }}>
+                            {user.fonction}{user.level === 1 && ' (Admin)'}
+                            </Text>
                         <Text>Nombre de matériel a utilisé: {user.materiels?.length}</Text>
                     </Body>
                     <Right style={{ position: 'absolute', top: 10, right: 5, zIndex: 999 }}>

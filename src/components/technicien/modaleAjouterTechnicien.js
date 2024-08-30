@@ -14,6 +14,9 @@ const ModalAjouter = ({ visible, hideModal }) => {
     const containerStyle = { backgroundColor: 'white', padding: 20, borderRadius: 20, margin: 20 };
     const handleCancel = () => {
         hideModal();
+        setNom("");
+        setPrenom("");
+        setContact("");
     };
     const [
         addTechnicien,

@@ -64,11 +64,13 @@ const CardMateriel = ({ details }) => {
                             visible={visibleModalOccuper}
                             hideModal={hideModalOccuper}
                             detailId={selectedDetailId}
+                            materielLibre={materielLibre} 
                         />
                         <ModalRendreEnPanne
                             visible={visibleModalEnPanne}
                             hideModal={hideModalEnPanne}
                             detailId={selectedDetailId} 
+                            materielLibre={materielLibre} 
                         />
                     </React.Fragment>
                 );
