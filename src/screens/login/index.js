@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
   const validate = () => {
     let isValid = true;
     if (email.trim() === '') {
-      setEmailError('L\'e-mail est requis.');
+      setEmailError('L\' e-mail est requis.');
       isValid = false;
     } else {
       setEmailError('');
@@ -51,6 +51,8 @@ const Login = ({ navigation }) => {
     if (validate()) {
       // Navigation si les validations passent
       navigation.navigate(HOME_NAVIGATOR);
+      setEmail(""),
+      setPassword("")
     }
   };
 

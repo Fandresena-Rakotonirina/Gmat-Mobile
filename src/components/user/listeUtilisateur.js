@@ -10,18 +10,6 @@ import { LOAD_USERS } from '../../GraphQL/Queries';
 const ListeUtilisateur = ({ navigation }) => {
    const { error, loading, data } = useQuery(LOAD_USERS);
 
-   if (loading) {
-      return <Text>Loading...</Text>; // Affiche un message de chargement pendant que les données sont récupérées
-   }
-
-   if (error) {
-      return <Text>Error: {error.message}</Text>; // Affiche un message d'erreur si la requête échoue
-   }
-
-   if (!data || !data.users) {
-      return <Text>No data available</Text>; // Affiche un message si aucune donnée n'est disponible
-   }
-
    return (
       <Container>
          <Header style={styles.header}>
@@ -31,11 +19,11 @@ const ListeUtilisateur = ({ navigation }) => {
                   <Ionicons name="menu" size={17} color="white" />
                </Button>
             </Left>
-            <Body style={{ flex: 2 ,marginLeft:20}}>
+            <Body style={{ flex: 2, marginLeft: 20 }}>
                <Title style={{ fontSize: 17, textTransform: 'uppercase' }}>Listes utilisateurs</Title>
             </Body>
             <Right>
-               <Button  onPress={() => navigation.navigate(SIGNIN)}>
+               <Button onPress={() => navigation.navigate(SIGNIN)}>
                   <View style={styles.avatarContainer}>
                      <Image
                         source={require('../../assets/images/Profile.png')}
@@ -72,16 +60,24 @@ const ListeUtilisateur = ({ navigation }) => {
             </View>
             <Divider />
             <List style={{ marginBottom: 50 }}>
-               {data.users.map(user => (
-                  <ListItem avatar key={user.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
-                     <Body>
-                        <Text>Nom : {user.nom}</Text>
-                        <Text>Prenom : {user.prenom}</Text>
-                        <Text note>Fonction : {user.fonction}</Text>
-                        <Text note>Email : {user.email}</Text>
-                     </Body>
-                  </ListItem>
-               ))}
+               {loading ? (
+                  <Text>Loading...</Text> // Affiche un message de chargement pendant que les données sont récupérées
+               ) : error ? (
+                  <Text>Error: {error.message}</Text> // Affiche un message d'erreur si la requête échoue
+               ) : !data || !data.users || data.users.length === 0 ? (
+                  <Text>No data available</Text> // Affiche un message si aucune donnée n'est disponible
+               ) : (
+                  data.users.map(user => (
+                     <ListItem avatar key={user.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
+                        <Body>
+                           <Text>Nom : {user.nom}</Text>
+                           <Text>Prenom : {user.prenom}</Text>
+                           <Text note>Fonction : {user.fonction}</Text>
+                           <Text note>Email : {user.email}</Text>
+                        </Body>
+                     </ListItem>
+                  ))
+               )}
             </List>
          </Content>
       </Container>

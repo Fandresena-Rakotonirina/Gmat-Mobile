@@ -59,7 +59,7 @@ const CardMaterielOccuper = ({ detail }) => {
                     </View>
                     <Divider style={styles.divider} />
                     <Text style={{ fontSize: 18, marginBottom: 10, textAlign: 'center' }}>
-                        Voulez-vous rendre libre ce matériel ?
+                        Voulez-vous rendre libre ce(s) matériel ?
                     </Text>
                     <Divider style={styles.divider} />
                     <View style={styles.buttonContainer}>

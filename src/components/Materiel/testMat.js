@@ -6,19 +6,20 @@ import ModalRendreEnPanne from './modalRendreEnPanne';
 import ModalRendreOccuper from './modalRendreOccuper';
 
 const CardMateriel = ({ details }) => {
+
     const windowWidth = Dimensions.get('window').width;
     const [visibleModalOccuper, setvisibleModalOccuper] = useState(false);
     const [visibleModalEnPanne, setVisibleModalEnPanne] = useState(false);
-    const [selectedDetailId, setSelectedDetailId] = useState(null);
+    const [selectedDetailId, setSelectedDetailId] = useState(null); // State to hold the selected detail ID
 
     const showModalOccuper = (id) => {
-        setSelectedDetailId(id);
+        setSelectedDetailId(id); // Set the selected detail ID
         setvisibleModalOccuper(true);
     };
     const hideModalOccuper = () => setvisibleModalOccuper(false);
-
+ 
     const showModalEnPanne = (id) => {
-        setSelectedDetailId(id);
+        setSelectedDetailId(id); // Set the selected detail ID
         setVisibleModalEnPanne(true);
     };
     const hideModalEnPanne = () => setVisibleModalEnPanne(false);
@@ -26,18 +27,11 @@ const CardMateriel = ({ details }) => {
     return (
         <>
             {details.map(detail => {
+                const totalMateriels = detail.total; // Utilisation de detail.total pour obtenir le total des matériels d'un type spécifique
+                const materielOccupe = detail.materiels.filter(materiel => materiel.user && materiel.user.id).length;
+                const materielEnPanne = detail.materiels.filter(materiel => materiel.technicien && materiel.technicien.id).length;
+                const materielLibre = totalMateriels - (materielOccupe + materielEnPanne);
 
-                // Calcul de la somme des nombres de matériels occupés
-                const materielOccupe = detail.materiels
-                    .filter(materiel => materiel.user && materiel.user.id)
-                    .reduce((total, materiel) => total + parseInt(materiel.nombre, 10), 0);
-
-                // Calcul de la somme des nombres de matériels en panne
-                const materielEnPanne = detail.materiels
-                    .filter(materiel => materiel.technicien && materiel.technicien.id)
-                    .reduce((total, materiel) => total + parseInt(materiel.nombre, 10), 0);
-
-                const materielLibre = detail.total - (materielOccupe + materielEnPanne);
                 return (
                     <React.Fragment key={detail.id}>
                         <Card style={styles.card}>
@@ -61,7 +55,7 @@ const CardMateriel = ({ details }) => {
                                     <MaterialIcons
                                         name="do-not-disturb"
                                         size={20}
-                                        onPress={() => showModalEnPanne(detail.id)}
+                                        onPress={() => showModalEnPanne(detail.id)} 
                                     />
                                 </View>
                             </CardItem>
@@ -70,17 +64,13 @@ const CardMateriel = ({ details }) => {
                             visible={visibleModalOccuper}
                             hideModal={hideModalOccuper}
                             detailId={selectedDetailId}
-                            materielLibre={materielLibre}
-                            type={detail.type}
-                            marque={detail.marque}
+                            materielLibre={materielLibre} 
                         />
                         <ModalRendreEnPanne
                             visible={visibleModalEnPanne}
                             hideModal={hideModalEnPanne}
-                            detailId={selectedDetailId}
-                            materielLibre={materielLibre}
-                            type={detail.type} 
-                            marque={detail.marque} 
+                            detailId={selectedDetailId} 
+                            materielLibre={materielLibre} 
                         />
                     </React.Fragment>
                 );
@@ -93,19 +83,19 @@ export default CardMateriel;
 
 const styles = StyleSheet.create({
     card: {
-        borderRadius: 15,
-        marginBottom: 20,
+       borderRadius: 15,
+       marginBottom: 20,
     },
     headerText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+       fontSize: 20,
+       fontWeight: 'bold',
     },
     footer: {
-        justifyContent: 'center',
+       justifyContent: 'center',
     },
     buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+       flexDirection: 'row',
+       justifyContent: 'space-between',
+       alignItems: 'center',
     }
 });

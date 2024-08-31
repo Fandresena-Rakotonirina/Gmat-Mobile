@@ -10,18 +10,6 @@ import { LOAD_MATERIELS } from '../../GraphQL/Queries';
 const ListMateriel = ({ navigation }) => {
    const { error, loading, data } = useQuery(LOAD_MATERIELS);
 
-   if (loading) {
-      return <Text>Loading...</Text>; // Affiche un message de chargement pendant que les données sont récupérées
-   }
-
-   if (error) {
-      return <Text>Error: {error.message}</Text>; // Affiche un message d'erreur si la requête échoue
-   }
-
-   if (!data || !data.materiels) {
-      return <Text>No data available</Text>; // Affiche un message si aucune donnée n'est disponible
-   }
-
    return (
       <Container>
          <Header style={styles.header}>
@@ -31,11 +19,11 @@ const ListMateriel = ({ navigation }) => {
                   <Ionicons name="menu" size={17} color="white" />
                </Button>
             </Left>
-            <Body style={{ flex: 2 ,marginLeft:20}}>
-               <Title style={{ fontSize: 17, textTransform: 'uppercase',marginLeft:"10" }}>Listes Matérielles</Title>
+            <Body style={{ flex: 2, marginLeft: 20 }}>
+               <Title style={{ fontSize: 17, textTransform: 'uppercase', marginLeft: "10" }}>Listes Matérielles</Title>
             </Body>
             <Right>
-               <Button  onPress={() => navigation.navigate(SIGNIN)}>
+               <Button onPress={() => navigation.navigate(SIGNIN)}>
                   <View style={styles.avatarContainer}>
                      <Image
                         source={require('../../assets/images/Profile.png')}
@@ -72,32 +60,41 @@ const ListMateriel = ({ navigation }) => {
             </View>
             <Divider />
             <List style={{ marginBottom: 50 }}>
-               {data.materiels.map(materiel => (
-                  <ListItem avatar key={materiel.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
-                     <Body>
-                        <Text>Type : {materiel.detail.type}</Text>
-                        <Text>Marque : {materiel.detail.marque}</Text>
-                        <Text note>Série : {materiel.serie}</Text>
-                        {materiel.user?.id ? (
-                           <>
-                              <Text note>Utilisateur : {materiel.user.nom} {materiel.user.prenom}</Text>
-                           </>
-                        ) : materiel.technicien?.id ? (
-                           <>
-                              <Text note>Mécanicien : {materiel.technicien.nom} {materiel.technicien.prenom}</Text>
-                           </>
-                        ) : (
-                           <Text note>Status : Libre</Text>
-                        )}
-                     </Body>
-                     <Right>
-                        <Text note >
-                           {materiel.user ? 'En marche' : 'En panne'}
-                        </Text>
-                     </Right>
-                  </ListItem>
-               ))}
+               {loading ? (
+                  <Text>Loading...</Text> // Affiche un message de chargement pendant que les données sont récupérées
+               ) : error ? (
+                  <Text>Error: {error.message}</Text> // Affiche un message d'erreur si la requête échoue
+               ) : !data || !data.materiels || data.materiels.length === 0 ? (
+                  <Text>No data available</Text> // Affiche un message si aucune donnée n'est disponible
+               ) : (
+                  data.materiels.map(materiel => (
+                     <ListItem avatar key={materiel.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
+                        <Body>
+                           <Text>Type : {materiel.detail.type}</Text>
+                           <Text>Marque : {materiel.detail.marque}</Text>
+                           <Text note>Série : {materiel.serie}</Text>
+                           {materiel.user?.id ? (
+                              <>
+                                 <Text note>Utilisateur : {materiel.user.nom} {materiel.user.prenom}</Text>
+                              </>
+                           ) : materiel.technicien?.id ? (
+                              <>
+                                 <Text note>Mécanicien : {materiel.technicien.nom} {materiel.technicien.prenom}</Text>
+                              </>
+                           ) : (
+                              <Text note>Status : Libre</Text>
+                           )}
+                        </Body>
+                        <Right>
+                           <Text note >
+                              {materiel.user ? 'En marche' : 'En panne'}
+                           </Text>
+                        </Right>
+                     </ListItem>
+                  ))
+               )}
             </List>
+
          </Content>
       </Container>
    );

@@ -33,6 +33,7 @@ export const LOAD_MATERIELS = gql`
       nombre
       status
       detail {
+        id
         type
         marque
         total

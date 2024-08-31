@@ -9,19 +9,6 @@ import { LOAD_TECHNICIENS } from '../../GraphQL/Queries';
 
 const ListTechnicien = ({ navigation }) => {
    const { error, loading, data } = useQuery(LOAD_TECHNICIENS);
-
-   if (loading) {
-      return <Text>Loading...</Text>; // Affiche un message de chargement pendant que les données sont récupérées
-   }
-
-   if (error) {
-      return <Text>Error: {error.message}</Text>; // Affiche un message d'erreur si la requête échoue
-   }
-
-   if (!data || !data.techniciens) {
-      return <Text>No data available</Text>; // Affiche un message si aucune donnée n'est disponible
-   }
-
    return (
       <Container>
          <Header style={styles.header}>
@@ -31,11 +18,11 @@ const ListTechnicien = ({ navigation }) => {
                   <Ionicons name="menu" size={17} color="white" />
                </Button>
             </Left>
-            <Body style={{ flex: 2 ,marginLeft:20}}>
-               <Title style={{ fontSize: 17, textTransform: 'uppercase',marginLeft:"10" }}>Listes techniciens</Title>
+            <Body style={{ flex: 2, marginLeft: 20 }}>
+               <Title style={{ fontSize: 17, textTransform: 'uppercase', marginLeft: "10" }}>Listes techniciens</Title>
             </Body>
             <Right>
-               <Button  onPress={() => navigation.navigate(SIGNIN)}>
+               <Button onPress={() => navigation.navigate(SIGNIN)}>
                   <View style={styles.avatarContainer}>
                      <Image
                         source={require('../../assets/images/Profile.png')}
@@ -72,15 +59,23 @@ const ListTechnicien = ({ navigation }) => {
             </View>
             <Divider />
             <List style={{ marginBottom: 50 }}>
-               {data.techniciens.map(technicien => (
-                  <ListItem avatar key={technicien.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
-                     <Body>
-                        <Text>Nom : {technicien.nom}</Text>
-                        <Text>Prenom : {technicien.prenom}</Text>
-                        <Text note>Contact : {technicien.contact}</Text>
-                     </Body>
-                  </ListItem>
-               ))}
+               {loading ? (
+                  <Text>Loading...</Text> // Affiche un message de chargement pendant que les données sont récupérées
+               ) : error ? (
+                  <Text>Error: {error.message}</Text> // Affiche un message d'erreur si la requête échoue
+               ) : !data || !data.techniciens || data.techniciens.length === 0 ? (
+                  <Text>No data available</Text> // Affiche un message si aucune donnée n'est disponible
+               ) : (
+                  data.techniciens.map(technicien => (
+                     <ListItem avatar key={technicien.id} style={{ paddingLeft: 0, paddingRight: 0, marginLeft: 0 }}>
+                        <Body>
+                           <Text>Nom : {technicien.nom}</Text>
+                           <Text>Prenom : {technicien.prenom}</Text>
+                           <Text note>Contact : {technicien.contact}</Text>
+                        </Body>
+                     </ListItem>
+                  ))
+               )}
             </List>
          </Content>
       </Container>

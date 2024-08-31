@@ -47,23 +47,33 @@ const Technicien = ({ navigation }) => {
    const handleSupprimerPress = (index) => {
       const selectedId = data.techniciens[index].id; // Récupérer l'ID du matériel à partir de l'index
       setSelectedId(selectedId); // Stocker l'ID dans l'état
-      setvisibleModalSupprimer(true); // Afficher le modal
-      closeMenu(index); // Fermer le menu
+      setvisibleModalSupprimer(true); 
+      closeMenu(index); 
    };
 
-   const renderMenu = (index) => (
-      <Menu
-         visible={visibleMenu[index]}
-         onDismiss={() => closeMenu(index)}
-         anchor={<MaterialIcons name="more-vert" size={24} color="black" onPress={() => openMenu(index)} />}
-      >
-         <Menu.Item onPress={() => handleModifierPress(index)} title="Modifier" />
-         <Divider />
-         <Menu.Item onPress={() => handleSupprimerPress(index)} title="Supprimer" />
-         <Divider />
-         <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
-      </Menu>
-   );
+   const renderMenu = (index) => {
+      const technicien = data.techniciens[index];
+      const hasMateriels = technicien.maintenances && technicien.maintenances.length > 0;
+
+      return (
+         <Menu
+            visible={visibleMenu[index]}
+            onDismiss={() => closeMenu(index)}
+            anchor={<MaterialIcons name="more-vert" size={24} color="black" onPress={() => openMenu(index)} />}
+         >
+            <Menu.Item onPress={() => handleModifierPress(index)} title="Modifier" />
+            <Divider />
+            <Menu.Item
+               onPress={() => handleSupprimerPress(index)}
+               title="Supprimer"
+               disabled={hasMateriels} // Désactive le menu si le technicien a réparé des matériels
+            />
+            <Divider />
+            <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
+         </Menu>
+      );
+   };
+
    return (
       <PaperProvider>
          <View style={styles.container}>
@@ -109,7 +119,7 @@ const Technicien = ({ navigation }) => {
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
-               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedTechnicien={selectedTechnicien}/>
+               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedTechnicien={selectedTechnicien} />
                <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId} />
 
                <FAB

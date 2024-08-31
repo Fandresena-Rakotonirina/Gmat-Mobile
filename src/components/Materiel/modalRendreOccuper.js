@@ -4,10 +4,10 @@ import { Modal, Portal, Text, Button, TextInput, Divider } from 'react-native-pa
 import Autocomplete from '../common/autocomplete';
 import { ADD_MATERIEL } from '../../GraphQL/Mutations';
 import { useMutation,useQuery } from '@apollo/client';
-import { LOAD_USERS ,LOAD_MATERIELS} from '../../GraphQL/Queries';
+import { LOAD_USERS ,LOAD_MATERIELS,LOAD_DETAILS} from '../../GraphQL/Queries';
 import { createOptionsUser } from '../../utils';
 
-const ModalRendreOccuper = ({ visible, hideModal, detailId, materielLibre }) => {
+const ModalRendreOccuper = ({ visible, hideModal, detailId, materielLibre,type,marque }) => {
     const [serie, setSerie] = React.useState('');
     const [nombre, setNombre] = React.useState('');
     const [userId, setUserId] = useState(null);
@@ -16,9 +16,17 @@ const ModalRendreOccuper = ({ visible, hideModal, detailId, materielLibre }) => 
 
     const { data: usersData, loading: loadingUsers, error: errorUsers } = useQuery(LOAD_USERS);
     
-    const [addMateriel, { loading: loadingAddMateriel, error: errorAddMateriel }] = useMutation(
-        ADD_MATERIEL
-    );
+     const [addMateriel] = useMutation(ADD_MATERIEL, {
+        refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_USERS }, { query: LOAD_DETAILS }]
+    });
+
+    const handleCancel = () => {
+        hideModal();
+        setSerie('');
+        setNombre('');
+        setTechnicienId(null);
+        setErrorMessage('');
+    };
 
     const rendreOccuperMat = () => {
         if (!userId || !serie || !nombre) {
@@ -34,20 +42,16 @@ const ModalRendreOccuper = ({ visible, hideModal, detailId, materielLibre }) => 
         addMateriel({
             variables: {
                 addMaterielFields: {
-                    serie: serie,
-                    nombre: nombre,
-                    userId: userId,
-                    detailId: detailId,
+                    serie,
+                    nombre: parseInt(nombre, 10),  // Conversion en entier,
+                    userId,
+                    detailId,
                     status: 'en marche',
                 }
-            },
-            refetchQueries: [{ query: LOAD_MATERIELS }, { query: LOAD_USERS }]
+            }
         }).then(response => {
-            console.log("Matériel ajouté :", response);
-            hideModal();
-            setSerie('');
-            setNombre('');
-            setUserId(null);
+            console.log("Matériel ajouté ( en marche ):", response);
+            handleCancel();
         }).catch(error => {
             console.log("Erreur lors de l'ajout :", error);
         });
@@ -56,16 +60,16 @@ const ModalRendreOccuper = ({ visible, hideModal, detailId, materielLibre }) => 
     const optionsUser = createOptionsUser(usersData?.users);
 
     if (loadingUsers) return <Text>Loading...</Text>;
-    if (errorUsers || errorAddMateriel) return <Text>Error: {errorUsers?.message || errorAddMateriel?.message}</Text>;
+    if (errorUsers) return <Text>Error: {errorUsers?.message}</Text>;
 
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  ORDINATEUR ASUS à :</Text>
+                <Text style={{ fontSize: 18, marginBottom: 10, alignSelf: "center" }}>Donner un  {type} {marque}" à :</Text>
                 <Autocomplete users={optionsUser} placeholder={"Utilisateur"} setUserId={setUserId} />
                 <View style={styles.alignerDeuxInput}>
                     <TextInput
-                        label="No Série ..."
+                        label="Série ..."
                         mode='outlined'
                         onChangeText={text => setSerie(text)}
                         value={serie}

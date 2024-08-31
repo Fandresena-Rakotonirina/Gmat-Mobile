@@ -5,7 +5,7 @@ import { Text, Card, CardItem, Body } from 'native-base';
 import { Modal, Portal, Button, Divider } from 'react-native-paper';
 import { useMutation } from '@apollo/client';
 import { DELETE_MATERIEL } from '../../GraphQL/Mutations';
-import { LOAD_MATERIELS, LOAD_TECHNICIENS,LOAD_DETAILS } from '../../GraphQL/Queries';
+import { LOAD_MATERIELS, LOAD_TECHNICIENS,LOAD_DETAILS } from '../../GraphQL/Queries'
 
 const CardMaterielEnPanne = ({ detail }) => {
 

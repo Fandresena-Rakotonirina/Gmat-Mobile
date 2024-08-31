@@ -43,14 +43,14 @@ const ModalRendreEnPanne = ({ visible, hideModal, detailId, materielLibre }) => 
             variables: {
                 addMaterielFields: {
                     serie,
-                    nombre,
+                    nombre: parseInt(nombre, 10),  // Conversion en entier,
                     technicienId,
                     detailId,
                     status: 'en panne',
                 }
             }
         }).then(response => {
-            console.log("Matériel ajouté :", response);
+            console.log("Matériel ajouté (en panne ):", response);
             handleCancel();
         }).catch(error => {
             console.log("Erreur lors de l'ajout :", error);
@@ -65,11 +65,11 @@ const ModalRendreEnPanne = ({ visible, hideModal, detailId, materielLibre }) => 
     return (
         <Portal>
             <Modal visible={visible} onDismiss={hideModal} contentContainerStyle={containerStyle}>
-                <Text style={styles.title}>Confier un ORDINATEUR ASUS à :</Text>
+                <Text style={styles.title}>Confier un {type} {marque}" à :</Text>
                 <Autocomplete users={optionsTechnicien} placeholder={"Technicien"} setUserId={setTechnicienId} />
                 <View style={styles.inputContainer}>
                     <TextInput
-                        label="No Série ..."
+                        label="Série ..."
                         mode='outlined'
                         onChangeText={setSerie}
                         value={serie}

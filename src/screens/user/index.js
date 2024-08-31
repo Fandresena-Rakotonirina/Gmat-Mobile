@@ -30,7 +30,7 @@ const User = ({ navigation }) => {
    const hideModalSupprimer = () => setvisibleModalSupprimer(false);
 
    const [selectedUser, setSelectedUser] = useState(null);
-   const [selectedId, setSelectedId] = useState(null); 
+   const [selectedId, setSelectedId] = useState(null);
    const [visibleMenu, setVisibleMenu] = useState({});
    const openMenu = (index) => {
       setVisibleMenu(prevState => ({ ...prevState, [index]: true }));
@@ -51,19 +51,29 @@ const User = ({ navigation }) => {
       closeMenu(index); // Fermer le menu
    };
 
-   const renderMenu = (index) => (
-      <Menu
-         visible={visibleMenu[index]}
-         onDismiss={() => closeMenu(index)}
-         anchor={<MaterialIcons name="more-vert" size={24} color="black" onPress={() => openMenu(index)} />}
-      >
-         <Menu.Item onPress={() => handleModifierPress(index)} title="Modifier" />
-         <Divider />
-         <Menu.Item onPress={() => handleSupprimerPress(index)} title="Supprimer" />
-         <Divider />
-         <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
-      </Menu>
-   );
+   const renderMenu = (index) => {
+      const user = data.users[index];
+      const hasMateriels = user.materiels && user.materiels.length > 0;
+
+      return (
+         <Menu
+            visible={visibleMenu[index]}
+            onDismiss={() => closeMenu(index)}
+            anchor={<MaterialIcons name="more-vert" size={24} color="black" onPress={() => openMenu(index)} />}
+         >
+            <Menu.Item onPress={() => handleModifierPress(index)} title="Modifier" />
+            <Divider />
+            <Menu.Item
+               onPress={() => handleSupprimerPress(index)}
+               title="Supprimer"
+               disabled={hasMateriels} // Désactiver si l'utilisateur a déjà utilisé du matériel
+            />
+            <Divider />
+            <Menu.Item onPress={() => console.log('Voir materiels')} title="Voir materiels" />
+         </Menu>
+      );
+   };
+
    return (
       <PaperProvider>
          <View style={styles.container}>
@@ -109,8 +119,8 @@ const User = ({ navigation }) => {
                   </ScrollView>
                </View>
                <ModalAjouter visible={visibleModalAjouter} hideModal={hideModalAjouter} />
-               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedUser={selectedUser}/>
-               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId}/>
+               <ModalModifier visible={visibleModalModifier} hideModal={hideModalModifier} selectedUser={selectedUser} />
+               <ModalSupprimer visible={visibleModalSupprimer} hideModal={hideModalSupprimer} id={selectedId} />
 
                <FAB
                   style={styles.fab}
